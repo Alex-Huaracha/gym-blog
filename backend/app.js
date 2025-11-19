@@ -5,6 +5,9 @@ import authRoutes from './routes/auth.js';
 
 const app = express();
 
+// Disable X-Powered-By header for security
+app.disable('x-powered-by');
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
