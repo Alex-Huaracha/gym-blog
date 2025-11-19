@@ -4,41 +4,40 @@ import bcrypt from 'bcrypt';
 async function main() {
   const hashedPassword = await bcrypt.hash('123456', 10);
 
-  const author = await prisma.user.upsert({
-    where: { username: 'admin' },
-    update: {},
-    create: {
+  const admin = await prisma.user.create({
+    data: {
       username: 'admin',
       password: hashedPassword,
       role: 'ADMIN',
-      posts: {
+    },
+  });
+
+  const userNormal = await prisma.user.create({
+    data: {
+      username: 'gymrat',
+      password: hashedPassword,
+      role: 'USER',
+    },
+  });
+
+  await prisma.post.create({
+    data: {
+      title: 'Hypertrophy vs Strength: Which one to choose?',
+      content: 'For aesthetics, the range of 8-12 repetitions...',
+      published: true,
+      authorId: admin.id,
+      comments: {
         create: [
           {
-            title: 'Hypertrophy vs Strength: Which to Choose?',
-            content:
-              'For aesthetics, the range of 8-12 repetitions is usually ideal...',
-            published: true,
-            comments: {
-              create: [
-                {
-                  content: 'Great article! It helped me a lot.',
-                  username: 'GymNewbie2025',
-                },
-              ],
-            },
-          },
-          {
-            title: 'The Truth About Creatine',
-            content:
-              'It is the supplement with the most scientific evidence...',
-            published: false,
+            content: 'Great article! It helped me a lot.',
+            authorId: userNormal.id,
           },
         ],
       },
     },
   });
 
-  console.log('Seed executed successfully 🌱');
+  console.log('Seed updated and executed successfully 🌱');
 }
 
 main()
