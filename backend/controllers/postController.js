@@ -59,6 +59,28 @@ export const createPost = async (req, res) => {
 
     res.status(201).json(newPost);
   } catch (error) {
-    res.status(500).json({ error: 'Error al crear el post' });
+    res.status(500).json({ error: 'Error creating the post' });
+  }
+};
+
+export const updatePost = async (req, res) => {
+  const { id } = req.params;
+  const { title, content, published } = req.body;
+
+  try {
+    const updatedPost = await prisma.post.update({
+      where: { id: id },
+      data: {
+        title,
+        content,
+        published,
+      },
+    });
+    res.json(updatedPost);
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+    res.status(500).json({ error: 'Error updating the post' });
   }
 };

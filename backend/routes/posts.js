@@ -3,6 +3,7 @@ import {
   getPublishedPosts,
   getPostById,
   createPost,
+  updatePost,
 } from '../controllers/postController.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 
@@ -12,5 +13,6 @@ router.get('/', getPublishedPosts);
 router.get('/:id', getPostById);
 
 router.post('/', verifyToken, createPost);
+router.put('/:id', verifyToken, updatePost);
 
 export default router;
